@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "type": "rich",
+  "provider_name": "Willie Ho GitHub Pages",
+  "provider_url": "https://willieho.github.io/Pages/",
+  "title": "Wedding Countdown",
+  "thumbnail_url": "https://willieho.github.io/Pages/countdown-preview.png",
+  "thumbnail_width": 1200,
+  "thumbnail_height": 630,
+  "width": 1200,
+  "height": 560,
+  "html": "<iframe src=\"https://willieho.github.io/Pages/countdown\" width=\"1200\" height=\"560\" frameborder=\"0\" scrolling=\"no\" allowfullscreen title=\"Wedding Countdown\"></iframe>"
+}
