@@ -9,5 +9,5 @@
   "thumbnail_height": 630,
   "width": 1200,
   "height": 560,
-  "html": "<iframe src=\"https://willieho.github.io/Pages/countdown\" width=\"1200\" height=\"560\" frameborder=\"0\" scrolling=\"no\" allowfullscreen title=\"Wedding Countdown\"></iframe>"
+  "html": "<iframe src=\"https://willieho.github.io/Pages/countdown.html?transparent=1\" width=\"1200\" height=\"560\" frameborder=\"0\" scrolling=\"no\" allow=\"fullscreen\" allowfullscreen title=\"Wedding Countdown\"></iframe>"
 }
