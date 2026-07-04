@@ -4,6 +4,36 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light" />
+    <meta
+      name="description"
+      content="A live wedding countdown widget designed for Canva previews and embeds."
+    />
+    <meta name="robots" content="index,follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Wedding Countdown" />
+    <meta
+      property="og:description"
+      content="A live wedding countdown widget designed for Canva previews and embeds."
+    />
+    <meta property="og:url" content="https://willieho.github.io/Pages/countdown" />
+    <meta property="og:image" content="https://willieho.github.io/Pages/countdown-preview.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Wedding Countdown" />
+    <meta
+      name="twitter:description"
+      content="A live wedding countdown widget designed for Canva previews and embeds."
+    />
+    <meta name="twitter:image" content="https://willieho.github.io/Pages/countdown-preview.png" />
+    <link rel="canonical" href="https://willieho.github.io/Pages/countdown" />
+    <link
+      rel="alternate"
+      type="application/json+oembed"
+      href="https://willieho.github.io/Pages/countdown.oembed.json"
+      title="Wedding Countdown"
+    />
     <title>Wedding Countdown</title>
     <style>
       :root {
@@ -23,14 +53,16 @@
       html,
       body {
         width: 100%;
-        min-height: 100%;
+        height: 100%;
         margin: 0;
       }
 
       body {
         display: grid;
         place-items: center;
-        padding: clamp(18px, 5vw, 56px);
+        min-height: 100svh;
+        overflow: hidden;
+        padding: clamp(14px, 4vw, 44px);
         background: linear-gradient(145deg, #fffaf8 0%, var(--bg) 48%, var(--blue) 100%);
         color: var(--ink);
         font-family:
@@ -40,9 +72,14 @@
           serif;
       }
 
+      body.transparent {
+        background: transparent;
+      }
+
       .countdown {
         width: min(920px, 100%);
-        padding: clamp(20px, 5vw, 44px) 0;
+        max-height: 100%;
+        padding: clamp(18px, 4vw, 38px) 0;
         border-top: 1px solid var(--line);
         border-bottom: 1px solid var(--line);
         text-align: center;
@@ -146,6 +183,48 @@
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
+
+      @media (max-height: 360px) {
+        body {
+          padding-block: 10px;
+        }
+
+        .countdown {
+          padding-block: 12px;
+        }
+
+        h1 {
+          margin-block: 6px;
+          font-size: clamp(22px, 6vw, 36px);
+        }
+
+        .date-line {
+          margin-bottom: 12px;
+          line-height: 1.4;
+        }
+
+        .time-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 6px;
+        }
+
+        .time-card {
+          padding: 8px 4px;
+        }
+
+        .value {
+          font-size: clamp(22px, 7vw, 32px);
+        }
+
+        .label {
+          margin-top: 5px;
+          font-size: 9px;
+        }
+
+        .message {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
@@ -185,7 +264,7 @@
            are static and cannot keep JavaScript running.
 
         URL settings example:
-        wedding-countdown-canva.html?date=2030-05-20T10:00:00%2B08:00&names=A%20%26%20B
+        countdown?date=2030-05-20T10:00:00%2B08:00&names=A%20%26%20B&transparent=1
       */
 
       const defaults = {
@@ -205,6 +284,7 @@
         message: params.get("message") || defaults.message,
         locale: params.get("locale") || defaults.locale,
         timeZone: params.get("tz") || defaults.timeZone,
+        transparent: ["1", "true", "yes"].includes((params.get("transparent") || "").toLowerCase()),
       };
 
       const target = new Date(config.targetDate);
@@ -219,24 +299,42 @@
         message: document.getElementById("message"),
       };
 
+      if (config.transparent) {
+        document.body.classList.add("transparent");
+      }
+
       elements.eyebrow.textContent = config.eyebrow;
       elements.names.textContent = config.names;
       elements.message.textContent = config.message;
 
+      function getSafeDateFormatter(date) {
+        try {
+          return new Intl.DateTimeFormat(config.locale, {
+            timeZone: config.timeZone,
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          }).format(date);
+        } catch {
+          return new Intl.DateTimeFormat(defaults.locale, {
+            timeZone: defaults.timeZone,
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          }).format(date);
+        }
+      }
+
       function formatDateLine(date) {
         if (Number.isNaN(date.getTime())) return "Please set a valid wedding date";
 
-        return new Intl.DateTimeFormat(config.locale, {
-          timeZone: config.timeZone,
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "numeric",
-          minute: "2-digit",
-          hour12: true,
-        })
-          .format(date)
-          .replace(/\//g, ".");
+        return getSafeDateFormatter(date).replace(/\//g, ".");
       }
 
       function pad(value) {
